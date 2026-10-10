@@ -1,5 +1,12 @@
+from ast import arguments
 import sys
 
+
+built_in = set([
+    "type",
+    "echo",
+    "exit"
+])
 
 def main():
     while True:
@@ -13,6 +20,16 @@ def main():
                 if not args:
                     continue
                 print(args)
+            case "type":    
+                commands_to_check = args.split(" ")
+                for command in commands_to_check:
+                    if not command: continue
+            
+                    if command not in built_in:
+                        print(f"{command}: not found")
+                        continue
+
+                    print(f"{command} is a shell builtin")
             case _:
                 print(f"{command}: command not found")
 
