@@ -2,16 +2,16 @@ import os
 import sys
 from pathlib import Path
 
-BUILTIN = set([
+BUILTIN = ([
     "type",
     "echo",
     "exit"
 ])
 
 
-def find_executable(name):
+def find_executable(name: str) -> str | None:
     for directory in os.environ.get("PATH", "").split(os.pathsep):
-        path = Path(directory) / name
+        path: Path = Path(directory) / name
         if path.is_file() and os.access(path, os.X_OK):
             return str(path)
     return None
@@ -22,7 +22,7 @@ def main():
         try:
             command = input("$ ")
         except EOFError:
-            break
+            break 
             
         name, _, args = command.partition(" ")
         if not name:
