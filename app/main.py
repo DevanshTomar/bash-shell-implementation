@@ -1,35 +1,46 @@
-from ast import arguments
+import os
 import sys
+from pathlib import Path
 
-
-built_in = set([
+BUILTIN = set([
     "type",
     "echo",
     "exit"
 ])
 
+
+def find_executable(name):
+    for directory in os.environ.get("PATH", "").split(os.pathsep):
+        path = Path(directory) / name
+        if path.is_file() and os.access(path, os.X_OK):
+            return str(path)
+    return None
+
+
 def main():
     while True:
-        command = input("$ ")
+        try:
+            command = input("$ ")
+        except EOFError:
+            break
+            
         name, _, args = command.partition(" ")
-
+        if not name:
+            continue
+            
         match name:
             case "exit":
                 sys.exit(0)
             case "echo":
-                if not args:
-                    continue
                 print(args)
             case "type":    
-                commands_to_check = args.split(" ")
-                for command in commands_to_check:
-                    if not command: continue
-            
-                    if command not in built_in:
-                        print(f"{command}: not found")
-                        continue
-
-                    print(f"{command} is a shell builtin")
+                for target in args.split():
+                    if target in BUILTIN:
+                        print(f"{target} is a shell builtin")
+                    elif path := find_executable(target):
+                        print(f"{target} is {path}")
+                    else:
+                        print(f"{target}: not found")
             case _:
                 print(f"{command}: command not found")
 
