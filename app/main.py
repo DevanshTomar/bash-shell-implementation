@@ -1,16 +1,20 @@
-from ast import match_case
 import sys
 
 
 def main():
-    # TODO: Uncomment the code below to pass the first stage
     while True:
         command = input("$ ")
-        match command: 
+        name, _, args = command.partition(" ")
+
+        match name:
             case "exit":
                 sys.exit(0)
-            
-        print(f"{command}: command not found")
+            case "echo":
+                if not args:
+                    continue
+                print(args)
+            case _:
+                print(f"{command}: command not found")
 
 
 if __name__ == "__main__":
